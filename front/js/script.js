@@ -43,7 +43,7 @@ async function displayProducts(products) {
 /**
  * Une fonction asynchrone (pour pouvoir utiliser await) qui récupère la liste
  * des produits 
- * depuis l'api et les affiches dans la page
+ * depuis l'api et les affiche dans la page
  */
 async function getProducts() {
     // On effectue la requete http sur l'api des produits qui nous retourne une réponse 
