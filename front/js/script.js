@@ -21,7 +21,7 @@ function generateProductHtml (product) {
 }
 
 /**
- * Un fonction qui prend en paramètre un tableau de produits
+ * Une fonction qui prend en paramètre un tableau de produits
  * et genere le html pour chacun de ces produits
  */
 async function displayProducts(products) {
