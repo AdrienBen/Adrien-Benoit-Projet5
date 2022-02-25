@@ -48,7 +48,7 @@ async function displayProducts(products) {
 async function getProducts() {
     // On effectue la requete http sur l'api des produits qui nous retourne une réponse 
     const response = await fetch ("http://localhost:3000/api/products");
-    console.log(response)
+    
     // On transforme la réponse en object javascript (un tableau de produits sous forme d'objet dans notre cas)
     // ex: [ { id: 1, nom: "toto"}, { id: 2, nom: "tata" }]
     productList = await response.json();

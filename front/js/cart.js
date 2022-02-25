@@ -1,3 +1,15 @@
+async function getProduct(productId) {
+  // On effectue la requete http sur l'api des produits qui nous retourne une réponse
+  const response = await fetch(
+    "http://localhost:3000/api/products/" + productId
+  );
+  // On transforme la réponse en object javascript (un tableau de produits sous forme d'objet dans notre cas)
+  const product = await response.json();
+
+  // On utilise pour afficher les produits à partir du tableau récupéré
+  return product;
+}
+
 // une fonction qui recupere le panier actuel
 async function getCart() {
   // On récupère le panier dans le local storage
@@ -20,7 +32,8 @@ async function displayTotalPrice() {
 
   // Pour chaque item dans notre panier
   for (const cartItem of cartItems) {
-    price += parseInt(cartItem.quantity) * parseInt(cartItem.price);
+    const productInfos = await getProduct(cartItem._id);
+    price += parseInt(cartItem.quantity) * parseInt(productInfos.price);
   }
 
   // On affiche le prix total
@@ -68,7 +81,7 @@ async function removeItemFromCart(productId, productColor) {
   );
 
   const index = currentCart.indexOf(elementToRemove);
-  console.log(elementToRemove);
+  
   if (index > -1) {
     currentCart.splice(index, 1);
   }
@@ -85,7 +98,8 @@ function formatPrice(price) {
   }).format(parseInt(price));
 }
 // On récupère le produit et on l'affiche dans le panier
-function generateCartItemHtml(cartItem) {
+async function generateCartItemHtml(cartItem) {
+  const cartItemInfo = await getProduct(cartItem._id);
   let htmlCartItem = `
       <article class="cart__item" data-id="${cartItem._id}" data-color="${
     cartItem.color
@@ -97,7 +111,7 @@ function generateCartItemHtml(cartItem) {
                   <div class="cart__item__content__description">
                     <h2>${cartItem.name}</h2>
                     <p>${cartItem.color}</p>
-                    <p>${formatPrice(cartItem.price)} </p>
+                    <p>${formatPrice(cartItemInfo.price)} </p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -134,11 +148,11 @@ async function displayCart() {
   // Pour chaque item du panier
   for (const cartItem of cartItems) {
     // On insere l'élément html
-    cartContainer.innerHTML += generateCartItemHtml(cartItem);
+    cartContainer.innerHTML += await generateCartItemHtml(cartItem);
   }
 
   const cartItemsDOM = document.querySelectorAll(".cart__item");
-  console.log(cartItemsDOM);
+ 
 
   cartItemsDOM.forEach((cartItem) => {
     const productId = cartItem.dataset.id;
@@ -161,7 +175,7 @@ async function displayCart() {
       });
   });
 
-  displayTotalPrice()
+  displayTotalPrice();
 }
 
 displayCart();
@@ -185,12 +199,51 @@ async function validateForm(event) {
   const emailInput = document.querySelector("#email");
 
   // On vérifie que les champs sont valides
+  const formValidation = {
+    lastName: lastNameInput.value.length !== 0,
+    firstName: firstNameInput.value.length !== 0,
+    address: addressInput.value.length !== 0,
+    city: cityInput.value.length !== 0,
+    email: isEmailValid(emailInput.value),
+  };
+
+  const lastnameErr = document.querySelector("#lastNameErrorMsg");
+  const firstnameErr = document.querySelector("#firstNameErrorMsg");
+  const addressErr = document.querySelector("#addressErrorMsg");
+  const cityErr = document.querySelector("#cityErrorMsg");
+  const emailErr = document.querySelector("#emailErrorMsg");
+  
+  lastnameErr.innerHTML = '';
+  firstnameErr.innerHTML = '';
+  addressErr.innerHTML = '';
+  cityErr.innerHTML = '';
+  emailErr.innerHTML = '';
+
+  if (!formValidation.lastName) {
+    lastnameErr.innerHTML = "Veuillez remplir le nom";
+  }
+  if (!formValidation.firstName) {
+    firstnameErr.innerHTML = "Veuillez remplir le prénom";
+  }
+
+  if (!formValidation.address) {
+    addressErr.innerHTML = "Veuillez remplir l'adresse";
+  }
+
+  if (!formValidation.city) {
+    cityErr.innerHTML = "Veuillez remplir la ville";
+  }
+
+  if (!formValidation.email) {
+    emailErr.innerHTML = "Veuillez remplir l'email au format correct";
+  }
+
   const isFormValid =
-    lastNameInput.value.length !== 0 &&
-    firstNameInput.value.length !== 0 &&
-    addressInput.value.length !== 0 &&
-    cityInput.value.length !== 0 &&
-    isEmailValid(emailInput.value);
+  formValidation.lastName &&
+  formValidation.firstName &&
+  formValidation.address &&
+  formValidation.city &&
+  formValidation.email;
 
   // On construit l'object contact
   let contactData = {
@@ -252,10 +305,10 @@ async function confirmCart(orderData) {
     // Vider le localStorage
     localStorage.clear();
     // Remplacer par une URL propre (let url = )
-   /*  window.location.assign(
+    /*  window.location.assign(
       "http://127.0.0.1:5502/front/html/confirmation.html?orderId=" + orderId
     ); */
-    window.location.href="confirmation.html?orderId=" + orderId
+    window.location.href = "confirmation.html?orderId=" + orderId;
   }
 }
 // Affiche une erreur si le client remplit mal le formulaire

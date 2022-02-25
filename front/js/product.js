@@ -66,7 +66,6 @@ async function displayProduct(product) {
   // On vient concatener le html généré via les données du produit
   imageContainer.innerHTML = `<img src="${product.imageUrl}" alt="${product.description}">`;
 
-  console.log(product.colors);
   // On boucle sur notre liste de couleur
   for (let i = 0; i < product.colors.length; i++) {
     // pour chaque couleur
@@ -76,13 +75,15 @@ async function displayProduct(product) {
 
   // On attache une fonction à l'évenement onclick du bouton #addToCart
   addProductButton.onclick = function () {
+    if(quantityInput.value <= 0) {
+      return alert("Veuillez entrer un quantité")
+    }
     // On crée notre produit à ajouter
     const productToAdd = {
       _id: product._id,
       name: product.name,
       description: product.description,
       imageUrl: product.imageUrl,
-      price: product.price,
       color: colorsInput.value, // on récupère la valeur du select des couleurs
       quantity: quantityInput.value, // on récupère la valeur de l'input de la quantité
     };
@@ -102,11 +103,9 @@ async function getProduct(productId) {
   const response = await fetch(
     "http://localhost:3000/api/products/" + productId
   );
-  console.log(response);
   // On transforme la réponse en object javascript (un tableau de produits sous forme d'objet dans notre cas)
   const product = await response.json();
 
-  console.log(product);
 
   // On utilise pour afficher les produits à partir du tableau récupéré
   await displayProduct(product);
