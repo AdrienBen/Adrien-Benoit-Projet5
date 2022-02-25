@@ -252,9 +252,10 @@ async function confirmCart(orderData) {
     // Vider le localStorage
     localStorage.clear();
     // Remplacer par une URL propre (let url = )
-    window.location.assign(
-      "http://127.0.0.1:5500/front/html/confirmation.html?orderId=" + orderId
-    );
+   /*  window.location.assign(
+      "http://127.0.0.1:5502/front/html/confirmation.html?orderId=" + orderId
+    ); */
+    window.location.href="confirmation.html?orderId=" + orderId
   }
 }
 // Affiche une erreur si le client remplit mal le formulaire
